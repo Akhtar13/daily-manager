@@ -1,0 +1,20 @@
+<?php
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CalendarController;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware('guest')->group(function (): void {
+    Route::get('/login', [AuthController::class, 'create'])->name('login');
+    Route::post('/login', [AuthController::class, 'store']);
+});
+
+Route::middleware('auth')->group(function (): void {
+    Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
+
+    Route::get('/', [CalendarController::class, 'dashboard']);
+    Route::get('/dashboard', [CalendarController::class, 'dashboard'])->name('dashboard');
+    Route::get('/calendar/{date}', [CalendarController::class, 'show'])->name('calendar.show');
+    Route::post('/calendar/{date}/skip', [CalendarController::class, 'sync'])->name('calendar.skip.sync');
+    Route::delete('/calendar/{date}/skip/{activity}', [CalendarController::class, 'destroy'])->name('calendar.skip.destroy');
+});
